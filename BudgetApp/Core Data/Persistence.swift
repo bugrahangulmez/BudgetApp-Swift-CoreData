@@ -14,10 +14,31 @@ struct PersistenceController {
     static let preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
-        for _ in 0..<10 {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-        }
+        
+        let firstBudget = Budget(context: viewContext)
+        firstBudget.title = "Entertainment"
+        firstBudget.limit = 500
+        firstBudget.dateCreated = Date()
+        
+        let secondBudget = Budget(context: viewContext)
+        secondBudget.title = "Groceries"
+        secondBudget.limit = 300
+        secondBudget.dateCreated = Date()
+        
+        let milk = Expense(context: viewContext)
+        milk.title = "Milk"
+        milk.amount = 5.45
+        milk.dateCreated = Date()
+        
+        let cookie = Expense(context: viewContext)
+        cookie.title = "Cookie"
+        cookie.amount = 3.45
+        cookie.dateCreated = Date()
+        
+        secondBudget.addToExpenses(milk)
+        secondBudget.addToExpenses(cookie)
+
+        
         do {
             try viewContext.save()
         } catch {
@@ -32,7 +53,7 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "BudgetApp")
+        container = NSPersistentContainer(name: "BudgetAppModel")
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }

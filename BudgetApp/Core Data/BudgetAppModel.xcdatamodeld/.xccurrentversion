@@ -3,6 +3,6 @@
 <plist version="1.0">
 <dict>
 	<key>_XCCurrentVersionName</key>
-	<string>BudgetApp.xcdatamodel</string>
+	<string>BudgetAppModel.xcdatamodel</string>
 </dict>
 </plist>
