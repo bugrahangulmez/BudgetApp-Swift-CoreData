@@ -14,6 +14,7 @@ struct BudgetDetailScreen: View {
     
     @State var title: String = ""
     @State var amount: Double?
+    @State private var selectedTags: Set<Tag> = []
     
     @FetchRequest(sortDescriptors: []) private var expenses: FetchedResults<Expense>
     
@@ -23,7 +24,7 @@ struct BudgetDetailScreen: View {
     }
     
     private var isFormValid: Bool {
-        !title.isEmptyOrWhitespace && amount != nil && amount! > 0
+        !title.isEmptyOrWhitespace && amount != nil && amount! > 0 && !selectedTags.isEmpty
     }
     
     private var totalExpenses: Double {
@@ -55,13 +56,14 @@ struct BudgetDetailScreen: View {
         expense.title = title
         expense.amount = amount ?? 0.0
         expense.dateCreated = Date()
+        expense.tags = NSSet(set: selectedTags)
    
         budget.addToExpenses(expense)
-        title = ""
-        amount = nil
         
         do {
             try viewContext.save()
+            title = ""
+            amount = nil
         } catch {
             print("Error saving expense: \(error.localizedDescription)")
         }
@@ -74,6 +76,9 @@ struct BudgetDetailScreen: View {
                     .presentationDetents([.medium])
                 TextField("Amount", value: $amount, formatter: NumberFormatter())
                     .keyboardType(.numberPad)
+                
+                TagsView(selectedTags: $selectedTags)
+                
                 Button {
                     addExpense()
                 } label: {
@@ -95,11 +100,7 @@ struct BudgetDetailScreen: View {
                     }
                     
                     ForEach(expenses) { expense in
-                        HStack {
-                            Text(expense.title ?? "")
-                            Spacer()
-                            Text(expense.amount, format: .currency(code: Locale.currencyCode))
-                        }
+                        ExpenseCellView(expense: expense)
                     }
                     .onDelete(perform: deleteExpense)
                 }

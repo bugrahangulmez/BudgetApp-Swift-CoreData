@@ -37,6 +37,17 @@ struct PersistenceController {
         
         secondBudget.addToExpenses(milk)
         secondBudget.addToExpenses(cookie)
+        
+        // insert tags
+        let commonTags = ["Food","Dining", "Travel", "Entertainment", "Shopping", "Transportation", "Utilities", "Groceries", "Health", "Education"]
+        commonTags.forEach { tagName in
+            let tag = Tag(context: viewContext)
+            
+            if ["Food", "Groceries"].contains(tagName) {
+                cookie.addToTags(tag)
+            }
+            tag.name = tagName
+        }
 
         
         do {
